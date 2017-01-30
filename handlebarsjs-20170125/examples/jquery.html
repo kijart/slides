@@ -1,0 +1,149 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mixed HTML and jQuery example</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <h1>Active accounts</h1>
+    <ul id="list"></ul>
+
+    <script type="text/javascript">
+      var accounts = [
+        {
+          "age": 30,
+          "company": "MOMENTIA",
+          "createdAt": 1416550037613,
+          "email": "reynolds.hartman@momentia.biz",
+          "isActive": true,
+          "name": {
+            "first": "Reynolds",
+            "last": "Hartman"
+          },
+          "picture": "http://lorempixel.com/100/100/people/1"
+        },
+        {
+          "age": 35,
+          "company": "GOLISTIC",
+          "createdAt": 1404410556292,
+          "email": "cunningham.cain@golistic.com",
+          "isActive": true,
+          "name": {
+            "first": "Cunningham",
+            "last": "Cain"
+          },
+          "picture": "http://lorempixel.com/100/100/people/2"
+        },
+        {
+          "age": 31,
+          "company": "ORBIN",
+          "createdAt": 1430113300050,
+          "email": "romero.moore@orbin.name",
+          "isActive": false,
+          "name": {
+            "first": "Romero",
+            "last": "Moore"
+          },
+          "picture": "http://lorempixel.com/100/100/people/3"
+        },
+        {
+          "age": 22,
+          "company": "VINCH",
+          "createdAt": 1390328115850,
+          "email": "ethel.fry@vinch.me",
+          "isActive": false,
+          "name": {
+            "first": "Ethel",
+            "last": "Fry"
+          },
+          "picture": "http://lorempixel.com/100/100/people/4"
+        },
+        {
+          "age": 20,
+          "company": "APEXTRI",
+          "createdAt": 1459971085742,
+          "email": "jordan.schneider@apextri.org",
+          "isActive": false,
+          "name": {
+            "first": "Jordan",
+            "last": "Schneider"
+          },
+          "picture": "http://lorempixel.com/100/100/people/5"
+        },
+        {
+          "age": 21,
+          "company": "GINKOGENE",
+          "createdAt": 1399152570355,
+          "email": "dyer.velasquez@ginkogene.ca",
+          "isActive": false,
+          "name": {
+            "first": "Dyer",
+            "last": "Velasquez"
+          },
+          "picture": "http://lorempixel.com/100/100/people/6"
+        },
+        {
+          "age": 29,
+          "company": "GOGOL",
+          "createdAt": 1456433657509,
+          "email": "parsons.guerra@gogol.us",
+          "isActive": true,
+          "name": {
+            "first": "Parsons",
+            "last": "Guerra"
+          },
+          "picture": "http://lorempixel.com/100/100/people/7"
+        },
+        {
+          "age": 40,
+          "company": "INTERLOO",
+          "createdAt": 1430245947888,
+          "email": "kristine.mcbride@interloo.biz",
+          "isActive": true,
+          "name": {
+            "first": "Kristine",
+            "last": "Mcbride"
+          },
+          "picture": "http://lorempixel.com/100/100/people/8"
+        },
+        {
+          "age": 40,
+          "company": "ENTROPIX",
+          "createdAt": 1427075804345,
+          "email": "tabatha.gentry@entropix.io",
+          "isActive": true,
+          "name": {
+            "first": "Tabatha",
+            "last": "Gentry"
+          },
+          "picture": "http://lorempixel.com/100/100/people/9"
+        },
+        {
+          "age": 30,
+          "company": "SIGNITY",
+          "createdAt": 1407492830115,
+          "email": "beck.mcdonald@signity.info",
+          "isActive": true,
+          "name": {
+            "first": "Beck",
+            "last": "Mcdonald"
+          },
+          "picture": "http://lorempixel.com/100/100/people/10"
+        }
+      ];
+
+      var $list = $('#list');
+
+      $.each(accounts, function(i, account) {
+        if (account.isActive) {
+          $list.append(
+            '<li>' +
+            '<img src="' + account.picture + '" alt="' + account.name.first + ' ' + account.name.last + '" />' +
+            account.name.first + ' ' + account.name.last + ' (<a href="mailto:' + account.email +'">'+account.email+'</a>)'+
+            '</li>'
+          );
+        }
+      });
+    </script>
+  </body>
+</html>

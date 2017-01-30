@@ -1,0 +1,350 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Handlebars.js</title>
+		<link rel="stylesheet" href="../css/reveal.css">
+		<link rel="stylesheet" href="../css/theme/moonwalk.css">
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="../lib/css/zenburn.css">
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement('link');
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match(/print-pdf/gi) ? '../css/print/pdf.css' : '../css/print/paper.css';
+			document.getElementsByTagName('head')[0].appendChild(link);
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+        <section>
+          <h1>Handlebars.js</h1>
+          <p>Just another template engine</p>
+          <img src="images/handlebars.svg" alt="Handlebars.js">
+          <p><small>Luis Miguel Vicente Fuentes</small></p>
+        </section>
+				<section>
+          <h2>Ingredientes</h2>
+          <br>
+          <p class="fragment fade-up">Navegador web</p>
+          <p class="fragment fade-up">JavaScript</p>
+          <p class="fragment fade-up">jQuery <span class="fragment fade-up">(realmente no)</span></p>
+          <p class="fragment fade-up">Handlebars.js</p>
+        </section>
+				<section>
+    			<section>
+            <h3>Por qué y cuando Handlebars</h3>
+            <br>
+            <p class="fragment fade-up">Desarrollamos una <strong>APP</strong>, no un sitio web</p>
+            <p class="fragment fade-up">Queremos separar la presentación de la lógica</p>
+            <p class="fragment fade-up">No queremos incluir HTML en nuestro código JavaScript</p>
+          </section>
+  				<section>
+            <h2>Deberíamos evitar</h2>
+            <pre><code class="hljs" data-trim>
+              ...
+              // Mixed HTML and JavaScript example
+
+              var accounts = [{...}, ...];
+              var list = document.getElementById('list');
+              var html = '';
+
+              for (var i = 0; i < accounts.length; i++) {
+                var account = accounts[i];
+
+                if (account.isActive) {
+                  html += '<li>' +
+                  '<img src="' + account.picture + '" alt="' + account.name.first + ' ' + account.name.last + '" />' +
+                  account.name.first + ' ' + account.name.last + ' (<a href="mailto:' + account.email +'">'+account.email+'</a>)'+
+                  '</li>';
+                }
+              }
+
+              list.innerHTML = html;
+
+              ...
+  					</code></pre>
+            <p class="fragment fade-up">Controlar como quieres que se renderize un <em>account</em> puede complicarse más y más...</p>
+          </section>
+  				<section>
+            <h2>Deberíamos evitar</h2>
+            <pre><code class="hljs" data-trim>
+              ...
+              // Mixed HTML and jQuery example
+
+              var accounts = [{...}, ...];
+              var $list = $('#list');
+
+              $.each(accounts, function(i, account) {
+                if (account.isActive) {
+                  $list.append(
+                    '<li>' +
+                    '<img src="' + account.picture + '" alt="' + account.name.first + ' ' + account.name.last + '">' +
+                    account.name.first + ' ' + account.name.last + ' (<a href="mailto:' + account.email +'">'+account.email+'</a>)'+
+                    '</li>'
+                  );
+                }
+              });
+
+              ...
+  					</code></pre>
+            <p>Controlar como quieres que se renderize un <em>account</em> puede complicarse más y más...</p>
+          </section>
+        </section>
+				<section>
+          <h2>Qué es Handlebars</h2>
+          <br>
+          <p class="fragment fade-up">Sistema de plantillas web (aka web template engine)</p>
+          <p class="fragment fade-up">Biblioteca basada en Mustache; mejores prestaciones y rendimiento</p>
+          <p class="fragment fade-up">"Logicless" templating language</p>
+          <p class="fragment fade-up">Mantiene la template y el código separados</p>
+          <p class="fragment fade-up">Hay implementaciones en muchos otros lenguajes: C++, Java, .NET, PHP, Python, Ruby, Swift...</p>
+        </section>
+				<section>
+          <h2>Handlebars Basics</h2>
+          <br>
+          <ul>
+            <li>Plantilla (Template)</li>
+            <li>Escapado HTML</li>
+            <li>Modelo de datos</li>
+            <li>Compilación</li>
+            <li>Helpers</li>
+            <li>Helpers incluidos</li>
+            <li>Registrar helpers</li>
+            <li>Registrar block helpers</li>
+          </ul>
+        </section>
+				<section>
+          <h2>Plantilla</h2>
+          <br>
+          <pre><code class="hljs" data-trim>
+            <script id="accounts-template" type="text/x-handlebars-template">
+              <h1>Total accounts: {{totalAccounts}}</h1>
+              <h2>Active accounts</h2>
+              <ul>
+                {{#each accounts}}
+                  {{#if isActive}}
+                    <li>
+                      <img src="{{picture}}" alt="{{name.first}} {{name.last}}">
+                      {{name.first}} {{name.last}} (<a href="mailto:{{email}}">{{email}}</a>)
+                    </li>
+                  {{/if}}
+                {{/each}}
+              </ul>
+            </script>
+          </code></pre>
+          <span class="fragment fade-up">
+            <p>Script tag: type="text/x-handlebars-template"</p>
+            <pre><code class="hljs" data-trim>
+              <script id="accounts-template" type="text/x-handlebars-template"></script>
+            </code></pre>
+          </span>
+				</section>
+				<section>
+          <h2>Escapado HTML</h2>
+          <pre><code class="hljs" data-trim>
+            <script id="accounts-template" type="text/x-handlebars-template">
+              <h1>Total accounts: {{totalAccounts}}</h1>
+              <h2>Active accounts</h2>
+              <ul>
+                {{#each accounts}}
+                  {{#if isActive}}
+                    <li>
+                      <img src="{{picture}}" alt="{{name.first}} {{name.last}}">
+                      {{name.first}} {{name.last}} (<a href="mailto:{{email}}">{{email}}</a>)
+                    </li>
+                  {{/if}}
+                {{/each}}
+              </ul>
+            </script>
+          </code></pre>
+          <span class="fragment fade-up">
+            <p><small>Handlebars <em>escapa</em> todos los valores {{expression}}; para evitarlo se usa tripe "{{{"</small></p>
+            <p><small>biography = &quot;Lorem ipsum &lt;strong&gt;dolor sit amet&lt;/strong&gt;&quot;</small></p>
+            <p><small>{{biography}} => Lorem ipsum &lt;strong&gt;dolor sit amet&lt;/strong&gt;</small></p>
+            <p><small>{{{biography}}} => Lorem ipsum <strong>dolor sit amet</strong></small></p>
+          </span>
+          <br>
+				</section>
+				<section>
+          <h2>Modelo de datos</h2>
+          <br>
+          <pre><code class="hljs" data-trim>
+            var accounts = [
+              {
+                "age": 30,
+                "company": "MOMENTIA",
+                "createdAt": 1416550037613,
+                "email": "reynolds.hartman@momentia.biz",
+                "isActive": true,
+                "name": {
+                  "first": "Reynolds",
+                  "last": "Hartman"
+                },
+                "picture": "http://lorempixel.com/100/100/people/1"
+              },
+              ...
+            ];
+          </code></pre>
+          <p>El contexto que se pasa a la template compilada es un JSON</p>
+				</section>
+				<section>
+          <h2>Compilación</h2>
+          <br>
+          <pre><code class="hljs" data-trim>
+            <script id="accounts-template" type="text/x-handlebars-template">
+              ...
+              // template content
+              ...
+            </script>
+          </code></pre>
+          <p>Se usa <em>Handlebars.compile</em> para compilar la template</p>
+          <pre><code class="hljs" data-trim>
+            var accounts = [{...}, ...];
+
+            // Grab the template script
+            var accountsTemplateScript = document.getElementById('accounts-template').innerHTML;
+
+            // Compile the template
+            var accountsTemplate = Handlebars.compile(accountsTemplateScript);
+
+            // Pass data to the template
+            var accountsHtml = accountsTemplate({
+              'accounts': accounts,
+              'totalAccounts': accounts.length
+            });
+
+            // Render result
+            list.innerHTML = accountsHtml;
+          </code></pre>
+				</section>
+				<section>
+          <h2>Helpers</h2>
+          <br>
+          <p class="fragment fade-up">Handlebars no permite utilizar JavaScript directamente en la template</p>
+          <p class="fragment fade-up">En su lugar, permite el uso de <em>helpers</em></p>
+          <p class="fragment fade-up">Un helper es una función JavaScript que puede ser llamada desde la template</p>
+          <p class="fragment fade-up">Favorece la reutilización de código y creación de templates complejos</p>
+          <span class="fragment fade-up">
+            <p>Sintaxis:</p>
+            <pre><code class="hljs" data-trim>
+              {{helperName1}}
+              {{helperName2 myVar}} // with parameters
+            </code></pre>
+          </span>
+				</section>
+				<section>
+  				<section>
+            <h2>Helpers incluidos</h2>
+            <br>
+            <ul>
+              <li>if</li>
+              <li>unless</li>
+              <li>each</li>
+              <li>with</li>
+              <li>...</li>
+            </ul>
+          </section>
+          <section>
+            <h2>Helpers incluidos</h2>
+            <br>
+            <p>#each &amp; #if</p>
+            <pre><code class="hljs" data-trim>
+              <script id="accounts-template" type="text/x-handlebars-template">
+                <h1>Total accounts: {{totalAccounts}}</h1>
+                <h2>Active accounts</h2>
+                <ul>
+                  {{#each accounts}}
+                    {{#if isActive}}
+                      <li>
+                        <img src="{{picture}}" alt="{{name.first}} {{name.last}}">
+                        {{name.first}} {{name.last}} (<a href="mailto:{{email}}">{{email}}</a>)
+                      </li>
+                    {{/if}}
+                  {{/each}}
+                </ul>
+              </script>
+            </code></pre>
+          </section>
+        </section>
+				</section>
+				<section>
+          <h2>Registrar helpers</h2>
+          <br>
+          <pre><code class="hljs" data-trim>
+            // Register a helper
+            Handlebars.registerHelper('capitalize', function(str) {
+              str = str || '';
+              return str.slice(0,1).toUpperCase() + str.slice(1);
+            });
+          </code></pre>
+          <p class="fragment fade-up"><small><strong>str</strong> es el argumento pasado al <em>helper</em> cuando es llamado</small></p>
+          <span class="fragment fade-up">
+            <pre><code class="hljs" data-trim>
+              {{capitalize name.first}} {{capitalize name.last}} => Reynolds Hartman
+            </code></pre>
+          </span>
+				</section>
+				<section>
+          <h2>Registrar block helpers</h2>
+          <br>
+          <pre><code class="hljs" data-trim>
+            // Register a block helper
+            Handlebars.registerHelper('uppercase', function(options) {
+              return options.fn(this).toUpperCase();
+            });
+          </code></pre>
+          <p class="fragment fade-up"><small>"this" es el contexto que existía al llamar al <em>block helper</em>.</small></p>
+          <p class="fragment fade-up"><small>El objeto <strong>options</strong> tiene una función especial: <em>fn</em>.</small></p>
+          <p class="fragment fade-up"><small>Es una versión compilada del fragmento de template contenida entre la apertura y cierre del <em>block helper</em></small></p>
+          <span class="fragment fade-up">
+            <pre><code class="hljs" data-trim>
+              {{#uppercase}}{{name.first}} {{name.last}}{{/uppercase}} => REYNOLDS HARTMAN
+            </code></pre>
+          </span>
+				</section>
+				<section>
+        <h2>Referencias</h2>
+        <p><img src="images/wolf-of-wall-street-giphy.gif"></p>
+        <ul style="font-size: 14px; text-align:">
+          <li><a href="https://en.wikipedia.org/wiki/Comparison_of_web_template_engines" target="_blank">https://en.wikipedia.org/wiki/Comparison_of_web_template_engines</a></li>
+          <li><a href="https://mustache.github.io/" target="_blank">https://mustache.github.io/</a></li>
+          <li><a href="http://handlebarsjs.com/" target="_blank">http://handlebarsjs.com/</a></li>
+          <li><a href="http://tryhandlebarsjs.com/" target="_blank">http://tryhandlebarsjs.com/</a></li>
+        </ul>
+        <p>Slides:</p>
+        <ul style="font-size: 14px; text-align:">
+          <li><a href="http://es.slideshare.net/iivanoo/handlebarsjs-12972497" target="_blank">http://es.slideshare.net/iivanoo/handlebarsjs-12972497</a></li>
+          <li><a href="http://es.slideshare.net/NelvinDriz/handlebarsjs" target="_blank">http://es.slideshare.net/NelvinDriz/handlebarsjs</a></li>
+        </ul>
+        <p>Colección de helpers handlebars:</p>
+        <ul style="font-size: 14px; text-align:">
+          <li><a href="https://github.com/helpers/handlebars-helpers" target="_blank">https://github.com/helpers/handlebars-helpers</a></li>
+          <li><a href="https://github.com/elving/swag" target="_blank">https://github.com/elving/swag</a></li>
+        </ul>
+        </section>
+        <section>
+          <h1>Gracias</h1>
+          <p><img src="images/do-you-want-a-ride.jpg"></p>
+        </section>
+			</div>
+		</div>
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.min.js"></script>
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: '../plugin/zoom-js/zoom.js', async: true }
+				]
+			});
+		</script>
+	</body>
+</html>
